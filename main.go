@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 )
@@ -8,6 +11,7 @@ import (
 type Agent struct {
 	*Network
 	*Os
+	*Disks
 }
 
 var (
@@ -21,13 +25,25 @@ func init() {
 }
 func main() {
 	agent = NewAgent()
-	logger.Println(agent.Os)
+	Pprint(agent)
 }
 func NewAgent() *Agent {
 	nw := ScanNetwork()
 	os := ScanOs()
+	disk := ScanDisks()
 	return &Agent{
 		nw,
 		os,
+		disk,
 	}
+}
+func Pprint(agent *Agent) {
+	bs, e := json.Marshal(agent)
+	if e != nil {
+		logger.Println(e)
+	}
+	var buf bytes.Buffer
+	json.Indent(&buf, bs, "", "\t")
+	fmt.Printf("%+v", buf.String())
+
 }

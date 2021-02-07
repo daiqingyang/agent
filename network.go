@@ -24,6 +24,7 @@ func ScanNetwork() (nw *Network) {
 	}
 	for _, inter := range inters {
 		name := inter.Name
+		//去除localhost
 		if name == "lo" {
 			continue
 		}
@@ -35,10 +36,12 @@ func ScanNetwork() (nw *Network) {
 			return
 		}
 		for _, addr := range addrs {
+			//去除ipv6
 			if strings.Contains(addr.String(), ":") {
 				continue
 			}
-			ads = append(ads, addr.String())
+			ip := strings.Split(addr.String(), "/")[0]
+			ads = append(ads, ip)
 		}
 		my := MyInterface{
 			name,

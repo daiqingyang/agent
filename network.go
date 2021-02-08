@@ -6,7 +6,7 @@ import (
 )
 
 type Network struct {
-	Interfaces []MyInterface
+	Interfaces []*MyInterface
 }
 
 type MyInterface struct {
@@ -16,7 +16,7 @@ type MyInterface struct {
 }
 
 func ScanNetwork() (nw *Network) {
-	var interfaces []MyInterface
+	var interfaces []*MyInterface
 	inters, err := net.Interfaces()
 	if err != nil {
 		logger.Println(err)
@@ -43,7 +43,7 @@ func ScanNetwork() (nw *Network) {
 			ip := strings.Split(addr.String(), "/")[0]
 			ads = append(ads, ip)
 		}
-		my := MyInterface{
+		my := &MyInterface{
 			name,
 			hw,
 			ads,

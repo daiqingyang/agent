@@ -3,9 +3,11 @@ package main
 import (
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/host"
+	"github.com/shirou/gopsutil/v3/load"
 )
 
 type Os struct {
+	*load.AvgStat
 	Hostname           string
 	Uptime             uint64
 	Procs              uint64
@@ -18,16 +20,25 @@ type Os struct {
 	PhysLogicalCpuNum  int
 	LogicalCpuNum      int
 	CpuModelName       string
+	MemTotal           uint64
+	MemUsed            uint64
+	MemFree            uint64
+	SwapTotal          uint64
+	SwapUsed           uint64
+	SwapFree           uint64
 }
-
-// CpuModeName        string
 
 func ScanOs() (o *Os) {
 	hInfo := getHostInfo()
 	PhysicalCpuNum := getPhysicalCpuNum()
 	LogicalCpuNum := getLogicalCpuNum()
 	CpuModelName := getCpuModelName()
+	avgStat := getLoad()
+	MemTotal, MemUsed, MemFree := getMem()
+	SwapTotal, SwapUsed, SwapFree := getSwap()
+
 	o = &Os{
+		avgStat,
 		hInfo.Hostname,
 		hInfo.Uptime,
 		hInfo.Procs,
@@ -40,10 +51,23 @@ func ScanOs() (o *Os) {
 		PhysicalCpuNum,
 		LogicalCpuNum,
 		CpuModelName,
+		MemTotal,
+		MemUsed,
+		MemFree,
+		SwapTotal,
+		SwapUsed,
+		SwapFree,
 	}
 	return
-}
 
+}
+func getLoad() *load.AvgStat {
+	avgStat, e := load.Avg()
+	if e != nil {
+		logger.Println(e)
+	}
+	return avgStat
+}
 func getHostInfo() *host.InfoStat {
 	hInfo := &host.InfoStat{}
 	hInfo, e := host.Info()

@@ -24,8 +24,8 @@ func init() {
 	logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Llongfile)
 }
 func main() {
-	agent = NewAgent()
-	Pprint(agent)
+	go SendPing()
+	StartHttp()
 }
 func NewAgent() *Agent {
 	nw := ScanNetwork()

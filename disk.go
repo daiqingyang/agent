@@ -36,6 +36,8 @@ func ScanDisks() *Disks {
 	return disks
 
 }
+
+//切片是否包含某值的判断
 func Contains(sl []string, s string) (contained bool) {
 	contained = false
 	for _, v := range sl {

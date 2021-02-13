@@ -13,6 +13,11 @@ type Agent struct {
 	*Os
 	*Disks
 }
+type config struct {
+	serverAdress string
+	pingUrl      string
+	pingInterval int
+}
 
 var (
 	agent  *Agent

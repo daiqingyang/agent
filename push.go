@@ -8,9 +8,13 @@ import (
 )
 
 func SendPing() {
-	serverAdress := "localhost:10240"
-	url := "/ping"
-	interval := 3 //second
+	serverAdress := config.ServerAdress
+	url := config.PingUrl
+	interval := config.PingInterval //second
+	//min 5 second
+	if interval < 5 {
+		interval = 5
+	}
 	if !strings.HasPrefix(serverAdress, "http://") || !strings.HasPrefix(serverAdress, "https://") {
 		serverAdress = "http://" + serverAdress
 	}

@@ -13,20 +13,26 @@ type Agent struct {
 	*Os
 	*Disks
 }
-type config struct {
-	serverAdress string
-	pingUrl      string
-	pingInterval int
+type Config struct {
+	ServerAdress string
+	PingUrl      string
+	PingInterval int
 }
 
 var (
 	agent  *Agent
 	logger *log.Logger
+	debug  bool
+	config Config = Config{
+		ServerAdress: "localhost:10240",
+		PingUrl:      "/ping",
+		PingInterval: 6,
+	}
 )
 
 func init() {
-
 	logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Llongfile)
+	configParse()
 }
 func main() {
 	go SendPing()

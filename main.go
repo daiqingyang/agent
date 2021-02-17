@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 type Agent struct {
@@ -35,8 +37,26 @@ func init() {
 	configParse()
 }
 func main() {
+	test()
+	os.Exit(1)
 	go SendPing()
 	StartHttp()
+}
+func test() {
+	r := strings.NewReader("helloworld,helloworld,helloworld,")
+	var b []byte = make([]byte, 8, 8)
+	for {
+		n, e := r.Read(b)
+		if e != nil {
+			fmt.Println("err:", e)
+			if e == io.EOF {
+				break
+			}
+		}
+
+		i, _ := r.Seek(0, os.SEEK_CUR)
+		fmt.Println(n, i, string(b))
+	}
 }
 func NewAgent() *Agent {
 	nw := ScanNetwork()

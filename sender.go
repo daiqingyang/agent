@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -21,13 +20,12 @@ func SendPing() {
 	for {
 		resp, err := http.Get(serverAdress + url)
 		if err != nil {
-			fmt.Println(err)
+			logger.Println(err)
 
 		} else {
-			fmt.Println(resp.StatusCode, time.Now())
+			logger.Println(resp.StatusCode, time.Now())
 		}
 		time.Sleep(time.Second * time.Duration(interval))
 
 	}
-
 }

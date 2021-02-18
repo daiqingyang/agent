@@ -9,6 +9,7 @@ import (
 )
 
 func configParse() {
+	var daemon bool
 	var configFile string
 	var home string
 	var e error
@@ -18,7 +19,9 @@ func configParse() {
 	defaultConfigFile := home + "/.gagent.cfg"
 	flag.StringVar(&configFile, "f", defaultConfigFile, "define agent config file path")
 	flag.BoolVar(&debug, "v", false, "open verbose mode")
+	flag.BoolVar(&daemon, "d", false, "run it in backgroud")
 	flag.Parse()
+	runSubProcessCheck(daemon)
 	if debug {
 		fmt.Println("$HOME:", home)
 		fmt.Println(configFile)
@@ -27,7 +30,7 @@ func configParse() {
 		if _, e := os.Stat(configFile); e != nil {
 			if os.IsNotExist(e) {
 				if f, e := os.Create(defaultConfigFile); e != nil {
-					logger.Println(e)
+					fmt.Println(e)
 				} else {
 					toml.NewEncoder(f).Encode(&config)
 				}
@@ -36,7 +39,7 @@ func configParse() {
 
 	}
 	if _, e := toml.DecodeFile(configFile, &config); e != nil {
-		logger.Println(e)
+		fmt.Println(e)
 		os.Exit(2)
 	}
 	if debug {

@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"strings"
 )
 
 type Agent struct {
@@ -19,6 +18,7 @@ type Config struct {
 	ServerAdress string
 	PingUrl      string
 	PingInterval int
+	LogFile      string
 }
 
 var (
@@ -33,31 +33,15 @@ var (
 )
 
 func init() {
-	logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Llongfile)
 	configParse()
+	CreateLog()
 }
 func main() {
-	test()
-	os.Exit(1)
+
 	go SendPing()
 	StartHttp()
 }
-func test() {
-	r := strings.NewReader("helloworld,helloworld,helloworld,")
-	var b []byte = make([]byte, 8, 8)
-	for {
-		n, e := r.Read(b)
-		if e != nil {
-			fmt.Println("err:", e)
-			if e == io.EOF {
-				break
-			}
-		}
 
-		i, _ := r.Seek(0, os.SEEK_CUR)
-		fmt.Println(n, i, string(b))
-	}
-}
 func NewAgent() *Agent {
 	nw := ScanNetwork()
 	os := ScanOs()
@@ -76,5 +60,20 @@ func Pprint(agent *Agent) {
 	var buf bytes.Buffer
 	json.Indent(&buf, bs, "", "\t")
 	fmt.Printf("%+v", buf.String())
+
+}
+func CreateLog() {
+	var out io.Writer
+	if config.LogFile != "" {
+		oFile, e := os.OpenFile(config.LogFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0644)
+		if e != nil {
+			fmt.Println(e)
+		}
+		out = io.MultiWriter(oFile, os.Stdout)
+		// out = oFile
+	} else {
+		out = os.Stdout
+	}
+	logger = log.New(out, "", log.Ldate|log.Ltime|log.Llongfile)
 
 }

@@ -16,3 +16,4 @@
 build.sh
 agent
 *.log
+*.md5
